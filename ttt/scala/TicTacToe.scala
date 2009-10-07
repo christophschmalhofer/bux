@@ -53,6 +53,8 @@ import java.util.Calendar;
     // Argument "start": Programm macht ersten Zug
     def main(args: Array[String]) {
       println("Du setzt: " + who.You + "\nProgramm setzt: " + who.Me)
+      println("Eingabe 0,0 bedeutet Zug in Zelle links oben");
+
       init()
       try {
         var line = ""
@@ -66,7 +68,10 @@ import java.util.Calendar;
           line = readLine()
           line match { 
             case Cell(l,c) => 
-              if (getWho(master, (l,c)) == who.Empty) { 
+              if ( l < 0 || l > 2  || c < 0 || c > 2) {
+                println("Ungültiger Index")
+                move = false
+              } else if (getWho(master, (l,c)) == who.Empty) { 
                 move = true
                 setWho(master,(l,c), who.You)
                 checkGameOver()
@@ -132,22 +137,24 @@ import java.util.Calendar;
       if (player.equals(who.Me)) who.You else who.Me
     }
 
-    // player setzt in dem geklonten Spielstand in die Zelle cell 
-    def cloneAndMoveAndCheckIsWinner(field:Array[Array[who.Value]], player:who.Value, cell:(Int,Int)) { 
-      val clone = cloneField(field)
-      setWho(clone, cell, player)
-      checkIsWinner(Some(player), clone, cell)
-    }
     
     // das ist ein Min-Max inspirierter Algorithmus
     // die Minumum Ermittlung ist aber naiv, man hat also eine Chance (wenn man selbst anfängt)
     def searchWinner(player:who.Value, field:Array[Array[who.Value]]) {
+
+      // player setzt in dem geklonten Spielstand in die Zelle cell 
+      def cloneAndMoveAndCheckIsWinner(player:who.Value, cell:(Int,Int)) { 
+        val clone = cloneField(field)
+        setWho(clone, cell, player)
+        checkIsWinner(Some(player), clone, cell)
+      }
+
       // zuerst einfachen Siegeszug suchen
-      emptyCells(field).foreach(cloneAndMoveAndCheckIsWinner(field, player, _))
+      emptyCells(field).foreach(cloneAndMoveAndCheckIsWinner(player, _))
 
       // Abbruchbedingung: falls Gegner einfachen Siegeszug hat -> hilft kein indirekter
       try {
-        emptyCells(field).foreach(cloneAndMoveAndCheckIsWinner(field, getOtherPlayer(player), _))
+        emptyCells(field).foreach(cloneAndMoveAndCheckIsWinner(getOtherPlayer(player), _))
       } catch {
         case ex: GameOverException => {return}
       }
