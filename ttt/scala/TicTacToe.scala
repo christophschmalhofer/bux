@@ -51,37 +51,47 @@ import java.util.Calendar;
 
 
     // Argument "start": Programm macht ersten Zug
+    // Argument "auto": Programm spielt gegen sich selbst
     def main(args: Array[String]) {
-      println("Du setzt: " + who.You + "\nProgramm setzt: " + who.Me)
-      println("Eingabe 0,0 bedeutet Zug in Zelle links oben");
-
+      val autoMove = args.exists( _ == "auto")
+      if (!autoMove) {
+        println("Du setzt: " + who.You + "\nProgramm setzt: " + who.Me)
+        println("Eingabe 0,0 bedeutet Zug in Zelle links oben");
+      }
       init()
+      var line = ""
+
+      var move = autoMove || args.exists( _ == "start")
       try {
-        var line = ""
-        var move = args.length == 1 && args(0) == "start"
-        do {
+        while(true) {
           if(move) {
-            meMove()
+            makeMove(who.Me)
             checkGameOver()
           }
           render(master)
-          line = readLine()
-          line match { 
-            case Cell(l,c) => 
-              if ( l < 0 || l > 2  || c < 0 || c > 2) {
-                println("Ungültiger Index")
-                move = false
-              } else if (getWho(master, (l,c)) == who.Empty) { 
-                move = true
-                setWho(master,(l,c), who.You)
-                checkGameOver()
-              } else {
-                println ("Zeile: " + l + " Spalte: " + c + " nicht leer.")
-                move = false
-              }
-            case _ => println("Ungültige Zelle: " + line); move = false
+          if (autoMove) {
+            println()
+            makeMove(who.You)
+            checkGameOver()
+          } else {
+            line = readLine()
+            line match { 
+              case Cell(l,c) => 
+                if ( l < 0 || l > 2  || c < 0 || c > 2) {
+                  println("Ungültiger Index")
+                  move = false
+                } else if (getWho(master, (l,c)) == who.Empty) { 
+                  move = true
+                  setWho(master,(l,c), who.You)
+                  checkGameOver()
+                } else {
+                  println ("Zeile: " + l + " Spalte: " + c + " nicht leer.")
+                  move = false
+                }
+              case _ => println("Ungültige Zelle: " + line); move = false
+            }
           }
-        } while (line != "")
+        } 
       } catch {
         case ex: GameOverException => println( ex.player + " hat gewonnen");render(master)
       }
@@ -112,24 +122,24 @@ import java.util.Calendar;
     }
 
     // Programm zieht
-    def meMove():Unit = {
+    def makeMove(player:who.Value):Unit = {
       // habe ich einen Siegeszug ?
       try {
-          searchWinner(who.Me, master)
+          searchWinner(player, master)
       } catch {
-        case ex: GameOverException => val move = ex.nextMove.getOrElse(emptyCells(master).first); setWho(master, move, who.Me);return 
+        case ex: GameOverException => val move = ex.nextMove.getOrElse(emptyCells(master).first); setWho(master, move, player);return 
       }
 
       // hast du einen Siegeszug ?
       try {
-          searchWinner(who.You, master)
+          searchWinner(getOtherPlayer(player), master)
       } catch {
         //vermassle seinen Siegeszug 
-        case ex: GameOverException => setWho(master, ex.nextMove.getOrElse(emptyCells(master).first), who.Me);return
+        case ex: GameOverException => setWho(master, ex.nextMove.getOrElse(emptyCells(master).first), player);return
       }
       val emptyCellsV =  emptyCells(master)
       val rand = new Random(Calendar.getInstance().getTimeInMillis())
-      setWho(master,emptyCellsV(rand.nextInt(emptyCellsV.length)), who.Me)    
+      setWho(master,emptyCellsV(rand.nextInt(emptyCellsV.length)), player)    
     }
     
     // liefert Gegner von player
