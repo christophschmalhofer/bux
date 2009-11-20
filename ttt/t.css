@@ -1,0 +1,7 @@
+
+
+.Computing {background-color: grey; cursor:wait}
+.YourTurn {background-color: LightSkyBlue; cursor:crosshair}
+.YourTurn:hover {background-color: blue}
+.GameOver {background-color: yellow; cursor:auto}
+.Remark {font-size: small}

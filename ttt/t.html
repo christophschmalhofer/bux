@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html>
+  <head>
+    <link rel="stylesheet" href="t.css" media="all" />
+    <script src="http://code.jquery.com/jquery-1.3.2.js" ></script> 
+    <script src="t.js" ></script> 
+  </head>
+  <body>
+    <h1>Tic Tac Toe</h1>
+    <p class="Remark">Google Chrome: gute Performance, Firefox 3.6 Beta 3: passabel, Firefox 3.5: schwer erträglich</p>
+    <form>
+      <input id="startButton" type="button" value="Computer startet" onclick="aiStart()"/>
+      <table border="1" style="font-size:40">
+	<tr> 
+	  <td id="cell00"/><td id="cell01"/><td id="cell02"/>
+	</tr>
+	<tr> 
+	  <td id="cell10"/><td id="cell11"/><td id="cell12"/>
+	</tr>
+	<tr> 
+	  <td id="cell20"/><td id="cell21"/><td id="cell22"/>
+	</tr>
+      </table>
+    </form>
+    <div id="out"/>
+  </body>
+</html>
