@@ -53,7 +53,7 @@ function println(x) {
 }
 
 function print(x) {
-    $("#out").append(x)
+    $("#out").append(x);
 }
 
 var winnerTriples = [
@@ -181,13 +181,13 @@ function emptyCells(field) {
 function cloneArray(array) {
     var clone = array.concat();
     for(var i=0; i < clone.length; ++i) {
-	clone[i] = clone[i].concat()
+	clone[i] = clone[i].concat();
     }
     return clone;
 }
 
 function toPos(input) {
-    return input.split(",")
+    return input.split(",");
 }
 
 function setWho(position, who, field) {
@@ -197,7 +197,7 @@ function setWho(position, who, field) {
 function makeFieldWhoFunction(field) {
     return function(position) {
 	return getWho(position, field);
-    }
+    };
 }
 
 function getWho(position, field) {
