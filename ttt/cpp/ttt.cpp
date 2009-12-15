@@ -23,10 +23,6 @@ namespace TicTacToe {
     Who(char icon):icon_(icon) {
     }
 
-    bool empty() {
-      return icon_ == '_';
-    }
-
     char icon() const{
       return icon_;
     }
